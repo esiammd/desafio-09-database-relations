@@ -154,9 +154,23 @@ describe('App', () => {
   });
 
   it('should not be able to create an order with a invalid customer', async () => {
-    const response = await request(app).post('/orders').send({
-      customer_id: '6a1922c8-af6e-470e-9a34-621cb0643911',
+    const product = await request(app).post('/products').send({
+      name: 'Produto 01',
+      price: 500,
+      quantity: 50,
     });
+
+    const response = await request(app)
+      .post('/orders')
+      .send({
+        customer_id: '6a1922c8-af6e-470e-9a34-621cb0643911',
+        products: [
+          {
+            id: product.body.id,
+            quantity: 5,
+          },
+        ],
+      });
 
     expect(response.status).toEqual(400);
   });
@@ -174,6 +188,7 @@ describe('App', () => {
         products: [
           {
             id: '6a1922c8-af6e-470e-9a34-621cb0643911',
+            quantity: 5,
           },
         ],
       });
